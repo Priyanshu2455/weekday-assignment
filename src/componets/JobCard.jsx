@@ -18,7 +18,7 @@ const JobCard = ({ cardDetails }) => {
   };
 
   return (
-    <Card sx={{borderRadius:"16px"}}>
+    <Card sx={{borderRadius:"16px",paddingTop:"20px"}}>
       <CardContent>
         <Typography
           variant="p"
@@ -44,7 +44,7 @@ const JobCard = ({ cardDetails }) => {
               style={{ width: "30px", height: "30px" }}
             />
           </Grid>
-          <Grid md={10}>
+          <Grid md={10} >
             <Grid item>
               <Typography
                 sx={{ margin: "0 0 5px 0" }}

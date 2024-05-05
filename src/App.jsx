@@ -9,7 +9,7 @@ function App() {
 
   return (
     <>
-    <div>
+    <div style={{margin : "40px 65px"}} >
       <Dashboard />
     </div>
 
