@@ -1,36 +1,49 @@
-import React, { useState } from 'react';
-import { Card, CardContent, Typography, TextField, FormControl, InputLabel, Select, MenuItem, Grid } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Card, CardContent, Typography, TextField, FormControl, InputLabel, Select, MenuItem, Grid, Button } from '@mui/material';
 import { WidthFull } from '@mui/icons-material';
 
 
-const FilterCard = ({ companyDetails , filterJobs ,selectedRole, setSelectedRole,selectedMinSalary, setSelectedMinSalary,selectedMinExp, setSelectedMinExp,searchByCompanyName, setSearchByCompanyName}) => {  
+const FilterCard = ({ handleClearButton, setSearchByJobLocation, searchByJobLocation, companyDetails , filterJobs ,selectedRole, setSelectedRole,selectedMinSalary, setSelectedMinSalary,selectedMinExp, setSelectedMinExp,searchByCompanyName, setSearchByCompanyName}) => {  
+
+    const [jobInfo,setJobInfo]= useState([]);
+
+    useEffect(() => {
+        const jobInfo = extractJobInfo(companyDetails);     
+        setJobInfo(jobInfo);
+    },[companyDetails])
 
 
     
     // ONCHANGE FUNCTION TO GET SELECTED VALUE FOR ROLE
     const handleRoleChange = (event) => {
       setSelectedRole(event.target.value);
-      filterJobs(event.target.value, selectedMinSalary, selectedMinExp,searchByCompanyName);
+      filterJobs(event.target.value, selectedMinSalary, selectedMinExp,searchByCompanyName,searchByJobLocation);
     };
 
     // ONCHANGE FUNCTION TO GET SELECTED VALUE FOR MINIMUM EXP  
     const handleMinSalaryChange = (event) => {
-      setSelectedMinSalary(event.target.value);
-      filterJobs(selectedRole, event.target.value, selectedMinExp,searchByCompanyName);
+        setSelectedMinSalary(event.target.value);
+        filterJobs(selectedRole, event.target.value, selectedMinExp,searchByCompanyName,searchByJobLocation);
     };
   
     // ONCHANGE FUNCTION TO GET SELECTED VALUE FOR MINIMUM SALARY
     const handleMinExpChange = (event) => {
-      setSelectedMinExp(event.target.value);
-      filterJobs(selectedRole, selectedMinSalary, event.target.value,searchByCompanyName);
+        setSelectedMinExp(event.target.value);
+      filterJobs(selectedRole, selectedMinSalary, event.target.value,searchByCompanyName,searchByJobLocation);
+    };
+
+    // ONCHANGE FUNCTION TO GET SELECTED VALUE FOR MINIMUM SALARY
+    const handleJobLocation = (event) => {
+    setSearchByJobLocation(event.target.value);
+    filterJobs(selectedRole, selectedMinSalary, selectedMinExp,searchByCompanyName,event.target.value);
     };
 
     // ONCHANGE FUNCTION TO GET SELECTED VALUE FOR MINIMUM SALARY
     const handleSearchChange = (event) => {
-      // Trim extra spaces and convert to lower case
+      // Trim extra spaces
       const trimmedValue = event.target.value.trim();
       setSearchByCompanyName(trimmedValue); 
-      filterJobs(selectedRole, selectedMinSalary, selectedMinExp,trimmedValue);
+      filterJobs(selectedRole, selectedMinSalary, selectedMinExp,trimmedValue,searchByJobLocation);
 
     };
     
@@ -46,23 +59,20 @@ const FilterCard = ({ companyDetails , filterJobs ,selectedRole, setSelectedRole
           const formattedMinExp = minExp !== null ? minExp : '';
       
           // Check if job role already exists in the set
-          if (!jobRolesSet.has(jobRole)) 
-            {
+          if (!jobRolesSet.has(jobRole)) {
             jobInfoArray.push({ jobRole, minJdSalary: formattedMinJdSalary, minExp: formattedMinExp });
             jobRolesSet.add(jobRole);
           }
         });
       
         return jobInfoArray;
-      };   
-
-    const jobInfo = extractJobInfo(companyDetails); 
+      };
+      
     
 
   return (
-        <card  style={{ width: '100%', marginLeft: '5%' }} >
+        <card  style={{ width: '100%', marginLeft: '5%',marginTop:"3%" }} >
           <CardContent>
-            <Typography variant="h6" gutterBottom>  Search Criteria </Typography>
             <Grid container spacing={2}>
               <Grid item xs={6} sm={2} sx={{height:'fit-content'}}>
                 <FormControl fullWidth>
@@ -73,6 +83,7 @@ const FilterCard = ({ companyDetails , filterJobs ,selectedRole, setSelectedRole
                     label="Role"
                     defaultValue=""
                     onChange={handleRoleChange}
+                    value={selectedRole}
 
                   >
                     {
@@ -84,18 +95,19 @@ const FilterCard = ({ companyDetails , filterJobs ,selectedRole, setSelectedRole
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid item xs={6} sm={1}>
-                <TextField fullWidth label="No. of Employees" type="number" />
-              </Grid>
-              <Grid item xs={6} sm={1}>
+              {/* <Grid item xs={6} sm={1}>
+                <TextField fullWidth label="No. of Employees" type="number"  />
+              </Grid> */}
+              <Grid item xs={6} sm={2}>
                 <FormControl fullWidth>
                     <InputLabel htmlFor="Experience">Experience</InputLabel>
-                    <Select
+                    <Select 
                         labelId="Experience"
                         id="Experience"
                         label="Experience"
                         defaultValue=""
                         onChange={handleMinExpChange}
+                        value={selectedMinExp}
 
                     >
                         {
@@ -108,11 +120,26 @@ const FilterCard = ({ companyDetails , filterJobs ,selectedRole, setSelectedRole
                     </FormControl>
               </Grid>
               <Grid item xs={6} sm={2}>
-                <TextField fullWidth label="Remote" type="text" />
+                <FormControl fullWidth>
+                        <InputLabel htmlFor="Remote">Job Location</InputLabel>
+                        <Select
+                            labelId="Remote"
+                            id="Remote"
+                            label="Job Location"
+                            defaultValue=""
+                            onChange={handleJobLocation}
+                            value={searchByJobLocation}
+                        >
+                           <MenuItem value="remote"> Remote </MenuItem>  
+                           <MenuItem value="hybrid"> Hybrid </MenuItem>  
+                           <MenuItem value="office"> In-Office </MenuItem>  
+
+                        </Select>
+                    </FormControl>
               </Grid>
-              <Grid item xs={6} sm={2}>
+              {/* <Grid item xs={6} sm={2}>
                 <TextField fullWidth label="Tech Stack" type="text" />
-              </Grid>
+              </Grid> */}
               <Grid item xs={6} sm={2}>
               <FormControl fullWidth>
                     <InputLabel htmlFor="Min Salary">Min Salary</InputLabel>
@@ -122,6 +149,7 @@ const FilterCard = ({ companyDetails , filterJobs ,selectedRole, setSelectedRole
                         label="Min Salary"
                         defaultValue=""
                         onChange={handleMinSalaryChange}
+                        value={selectedMinSalary}
 
                     >
                         {
@@ -134,8 +162,16 @@ const FilterCard = ({ companyDetails , filterJobs ,selectedRole, setSelectedRole
                     </FormControl>
               </Grid>
               <Grid item xs={6} sm={2}>
-                <TextField fullWidth label="Search by Name" placeholder="Enter company name" onChange={handleSearchChange} />
+                <TextField value={searchByCompanyName} fullWidth label="Search by Name" placeholder="Enter company name" onChange={handleSearchChange} />
               </Grid>
+
+              {/* CLEAR BUTTON */}
+              <Grid item xs={6} sm={2}>
+                <Button  sx={{ width: "50%",background:"#1976D2",borderRadius:"8px",margin:"10px 0 0 0" ,color:"black" }} onClick={handleClearButton}>
+                    Clear
+                </Button>
+              </Grid>
+
             </Grid>
           </CardContent>
         </card>

@@ -16,15 +16,18 @@ const Dashboard = () => {
   const [selectedMinSalary, setSelectedMinSalary] = useState('');
   const [selectedMinExp, setSelectedMinExp] = useState('');
   const [searchByCompanyName, setSearchByCompanyName] = useState("");
+  const [searchByJobLocation, setSearchByJobLocation] = useState("");
 
-  console.log(filterdData);
+
+  // console.log(filterdData);
 
   // API CALL EVERY TIME OFFSET VALUE CHANGES
   useEffect(() => {
     fetchData();
   }, [offset]);
+
   useEffect(()=>{
-    filterJobs(selectedRole,selectedMinSalary,selectedMinExp,searchByCompanyName)
+    filterJobs(selectedRole,selectedMinSalary,selectedMinExp,searchByCompanyName,searchByJobLocation)
     // setFilteredData(jobs)
   },[jobs])
 
@@ -78,25 +81,65 @@ const Dashboard = () => {
     }
   };
 
-  const filterJobs = (role, minSalary, minExp, companyName) => {
+  // METHORD TO GET DATA AS PER APPLIED FILTER
+  const filterJobs = (role, minSalary, minExp, companyName, jobLocation) => {
     const filtered = jobs?.filter((job) => {
       const roleMatch = role === '' || job.jobRole === role;
       const minSalaryMatch = minSalary === '' || job.minJdSalary >= parseFloat(minSalary);
       const minExpMatch = minExp === '' || job.minExp >= parseInt(minExp);
       const companyNameMatch = companyName === "" || job.companyName.toLowerCase().includes(companyName.toLowerCase().trim());
   
-      return roleMatch && minSalaryMatch && minExpMatch && companyNameMatch;
+      // Determine jobLocationMatch based on the selected location filter
+      let jobLocationMatch;
+      if (jobLocation === "remote") {
+        jobLocationMatch = job.location === "remote";
+      } else if (jobLocation === "hybrid") {
+        jobLocationMatch = job.location === "hybrid";
+      } else if (jobLocation === "office") {
+        jobLocationMatch = job.location !== "remote" && job.location !== "hybrid";
+      } else {
+        jobLocationMatch = true; // No location filter selected, so all jobs match
+      }
+  
+      // If only jobLocation filter is applied, ignore other filters
+      if (role === '' && minSalary === '' && minExp === '' && companyName === '') {
+        return jobLocationMatch;
+      }
+  
+      return roleMatch && minSalaryMatch && minExpMatch && companyNameMatch && jobLocationMatch;
     });
   
     setFilteredData(filtered);
   };
-  
-  
+
+  const handleClearButton = () =>{
+    setSelectedRole('');
+    setSelectedMinSalary('');
+    setSelectedMinExp('');
+    setSearchByCompanyName('');
+    setSearchByJobLocation('');
+    setFilteredData(jobs);
+  }  
+
 
   return (
     <Grid container spacing={10} >
       {/* FILTER CARD SECTION */}
-      <FilterCard  selectedRole={selectedRole} setSelectedRole={setSelectedRole} selectedMinSalary={selectedMinSalary} setSelectedMinSalary ={setSelectedMinSalary} selectedMinExp= {selectedMinExp} setSelectedMinExp ={setSelectedMinExp}  setSearchByCompanyName ={setSearchByCompanyName} searchByCompanyName={searchByCompanyName} companyDetails={jobs} filterJobs={filterJobs} />
+      <FilterCard 
+        setSearchByJobLocation={setSearchByJobLocation} 
+        searchByJobLocation={searchByJobLocation}   
+        selectedRole={selectedRole} 
+        setSelectedRole={setSelectedRole} 
+        selectedMinSalary={selectedMinSalary} 
+        setSelectedMinSalary ={setSelectedMinSalary} 
+        selectedMinExp= {selectedMinExp} 
+        setSelectedMinExp ={setSelectedMinExp}  
+        setSearchByCompanyName ={setSearchByCompanyName} 
+        searchByCompanyName={searchByCompanyName} 
+        companyDetails={jobs} 
+        filterJobs={filterJobs} 
+        handleClearButton={handleClearButton}
+      />
 
       {filterdData?.map((item) => {
         return (

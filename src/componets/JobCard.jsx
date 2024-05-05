@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
+import ElectricBoltIcon from '@mui/icons-material/ElectricBolt';
+import FaceIcon from '@mui/icons-material/Face';
 import {
   Card,
   CardContent,
@@ -25,7 +27,7 @@ const JobCard = ({ cardDetails }) => {
           component="div"
           sx={{
             borderRadius: "10px",
-            border: "1px solid gray",
+            border: '1px solid #F1f1f1',
             fontSize: "13px",
             width: "fit-content",
             display: "flex",
@@ -44,8 +46,8 @@ const JobCard = ({ cardDetails }) => {
               style={{ width: "30px", height: "30px" }}
             />
           </Grid>
-          <Grid md={10} >
-            <Grid item>
+          <Grid md={10} sx={{marginLeft:"7px"}} >
+            <Grid item >
               <Typography
                 sx={{ margin: "0 0 5px 0" }}
                 color={"gray"}
@@ -123,13 +125,15 @@ const JobCard = ({ cardDetails }) => {
         <Grid item>{cardDetails?.minExp ? `${cardDetails?.minExp} Years` : "-"}</Grid>
         <Grid container >
           <Grid item md={12}>
-            <Button  sx={{ width: "100%",background:"#55EFC4",borderRadius:"8px",margin:"10px 0 0 0" ,color:"black" }}>
+            <Button  sx={{ width: "100%",background:"#55EFC4",borderRadius:"8px",margin:"10px 0 0 0" ,color:"black",textTransform:"none"}}>
+              <ElectricBoltIcon sx={{ height: "14px", width: "14px", color:"#FF822D" }} />  
               Easy Apply
             </Button>
           </Grid>
           <Grid item md={12}  >
-            <Button variant="outlined" sx={{ width: "100%" ,margin:"10px 0 0 0",background:"#1976D2" ,color:"white" }}>
-             Unlocl Referal asks
+            <Button variant="outlined" sx={{marginRight:"2px", width: "100%" ,margin:"10px 0 0 0",background:"#1976D2" ,color:"white",textTransform:"none" }}>
+            <FaceIcon sx={{ height: "14px", width: "14px", color:"#FF822D",marginRight:"2px" }} />  
+             Unlock referral asks
             </Button>
           </Grid>
         </Grid>
