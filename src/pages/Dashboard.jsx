@@ -18,7 +18,7 @@ const Dashboard = () => {
   const [searchByCompanyName, setSearchByCompanyName] = useState("");
   const [searchByJobLocation, setSearchByJobLocation] = useState("");
 
-
+  // dashboard data  
   // console.log(filterdData);
 
   // API CALL EVERY TIME OFFSET VALUE CHANGES
